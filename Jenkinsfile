@@ -8,9 +8,8 @@ pipeline {
     }
     stage('Docker Tag and Push') {
       steps {
-          sh "docker tag my-website:${env.BUILD_NUMBER} localhost:5000/my-website:${env.BUILD_NUMBER}"
-          sh "docker push localhost:5000/my-website:${env.BUILD_NUMBER}"
-        }
+        sh "docker tag my-website:${env.BUILD_NUMBER} localhost:5000/my-website:${env.BUILD_NUMBER}"
+        sh "docker push localhost:5000/my-website:${env.BUILD_NUMBER}"
       }
     }
     stage('Docker Remove Image') {
@@ -22,14 +21,14 @@ pipeline {
       steps {
           sh 'cat deployment.yaml | sed "s/{{BUILD_NUMBER}}/$BUILD_NUMBER/g" | kubectl apply -f -'
       }
+    }
   }
-}
-post {
-    success {
-      slackSend(message: "Pipeline is successfully completed.")
-    }
-    failure {
-      slackSend(message: "Pipeline failed. Please check the logs.")
-    }
-}
+  post {
+      success {
+        slackSend(message: "Pipeline is successfully completed.")
+      }
+      failure {
+        slackSend(message: "Pipeline failed. Please check the logs.")
+      }
+  }
 }   
