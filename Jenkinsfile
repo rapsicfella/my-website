@@ -1,7 +1,7 @@
 pipeline {
   agent any
   stages {
-    stage('Docker Clean & Build') {
+    stage('Docker Build') {
       steps {
         sh "docker build -t my-website:${env.BUILD_NUMBER} ."
       }
@@ -19,7 +19,9 @@ pipeline {
     }
     stage('Apply Kubernetes Files') {
       steps {
+        withKubeConfig([credentialsId: 'mykubeconfig']) {
           sh 'cat deployment.yaml | sed "s/{{BUILD_NUMBER}}/$BUILD_NUMBER/g" | kubectl apply -f -'
+        }
       }
     }
   }
